@@ -1,6 +1,19 @@
 "use strict";
 //
-// Element Selection
+//
+//////////////////////////////////////////////////////////////////////
+// COMMENTS :
+// This script started out quite simple, it used recursion to deal with computation.
+// However, too many functions/elements had access to the state and this snowballed out of control
+// End result is a fragile script. Progressively harder to read and deal with issues
+// Decided to rewrite using a different approach - this current script does work~
+//////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////
+/////////////////////////////   SELECTORS
+//////////////////////////////////////////////////////////////////////
+//
 const numberButtons = document.querySelectorAll(".numbers"); // NodeList
 const operations = document.querySelectorAll(".operations"); // NodeList
 //
@@ -29,7 +42,7 @@ const setOutput = function (textContent) {
 //
 let cleared = false;
 let clicked = false;
-let value = ""; //3+3..(33)
+let value = "";
 let equaledValue = false;
 //
 //
@@ -82,8 +95,6 @@ const numberClick = function (e) {
 //////////////////////////////////////////////////////////////////////
 //
 //
-//
-//
 const doMath = function () {
   const numArr = [].concat(numberArray);
   const opsArr = [].concat(operationsArray);
@@ -133,16 +144,12 @@ const doMath = function () {
     recursive();
   }
   recursive();
-
   output.textContent = numArr[0];
   value = numArr[0];
   numberArray = [];
   numberArray.push(Number(numArr[0]));
   operationsArray = [];
 };
-//
-//
-//
 //
 //
 // //////////////////////////////////////////////////////////////////////
@@ -165,17 +172,6 @@ equalsButton.addEventListener("click", () => {
 //
 //
 clearButton.addEventListener("click", clearOutput);
-
-// const calculator = {
-
-// }
-// def recurse(arr):
-//    if numArr != 0:
-//        doshit()
-//        recurse(???)
-
-// recurse(numArr)
-
 //
 //
 //
