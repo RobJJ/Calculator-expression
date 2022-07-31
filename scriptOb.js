@@ -20,7 +20,8 @@ const clearButton = document.getElementById("clear");
 //////////////////////////////////////////////////////////////////////
 //
 //
-const importedString = "22+4-5x6+2"; //This is the only variable that connects 'backend' to 'frontend'
+// const importedString = "30-20%2+9+3x7"; //This is the only variable that connects 'backend' to 'frontend'
+const importedString = "2+5x2-10%2";
 //
 const setUp = function (string) {
   //
@@ -30,13 +31,13 @@ const setUp = function (string) {
   let numberCollector = "";
   //
   [...string].forEach((ele, idx, arr) => {
-    if (Number(ele)) {
+    if (Number(ele) || ele === "0" || ele === ".") {
       numberCollector += ele;
       if (idx === arr.length - 1) numbers.push(numberCollector); // If last element, push it
     } else {
       if (numberCollector.length === 0) return; //If there are no numbers to push, dont push
-      numbers.push(numberCollector);
       operators.push(ele);
+      numbers.push(numberCollector);
       numberCollector = "";
     }
   });
@@ -56,42 +57,63 @@ const setUp = function (string) {
 
 function compute(func) {
   const displayObj = func(importedString); // Gets setUp object with numbers and operators as keys and arrays as values
-  let orderOfOps = ["%", "x", "-", "+"];
+  console.log("DisplayObject", displayObj);
+  let order = ["%", "x", "-", "+"];
+  //
+  const doMath = {
+    "+": function (a, b) {
+      return a + b;
+    },
+    "-": function (a, b) {
+      return a - b;
+    },
+    x: function (a, b) {
+      return a * b;
+    },
+    "%": function (a, b) {
+      return a / b;
+    },
+  };
   function recursion() {
     if (displayObj.numbers.length === 1) return;
     //
-    if (displayObj.operators.indexOf(orderOfOps[0]) > -1) {
-      let idx = displayObj.operators.indexOf(orderOfOps[0]);
-      console.log("Idx: ", idx);
-      console.log(displayObj.numbers[idx]);
-      console.log(displayObj.operators[idx]);
-      console.log(displayObj.numbers[idx + 1]);
-      // let string = `${displayObj.numbers[idx]}${displayObj.operators[idx]}${
-      //   displayObj.numbers[idx + 1]
-      // }`;
-      // let value = eval(
-      //   `${displayObj.numbers[idx]}${displayObj.operators[idx]}${
-      //     displayObj.numbers[idx + 1]
-      //   }`
-      // );
-      displayObj.numbers.splice(idx, 2);
-      displayObj.operators.splice(idx, 1);
-    } else {
-      orderOfOps.shift();
+    while (displayObj.operators.includes(order[0])) {
+      console.log(`Order: ${order[0]} is being used`);
+      let pos = displayObj.operators.indexOf(order[0]);
+      //
+      let first = displayObj.numbers[pos];
+      let second = displayObj.numbers[pos + 1];
+      let value = doMath[order[0]](Number(first), Number(second));
+      console.log("Value: ", value);
+      //
+      displayObj.numbers.splice(pos, 2, value);
+      displayObj.operators.splice(pos, 1);
     }
+    order.shift();
     recursion();
   }
   recursion();
-  console.log(displayObj.numbers);
+  return displayObj.numbers;
 }
-const equalsFunc = compute(setUp);
+//
+console.log(compute(setUp));
+// const equalsFunc = function () {
+//   console.log(compute(setUp));
+// };
 //
 //
+//
+// var math_it_up = {
+//   '+': function (x, y) { return x + y },
+//   '-': function (x, y) { return x - y }
+// }​​​​​​​;
+
+// math_it_up['+'](1, 2) == 3;
 //////////////////////////////////////////////////////////////////////
 /////////////////////////////   EVENT LISTENERS
 //////////////////////////////////////////////////////////////////////
 //
-equalsButton.addEventListener("click", equalsFunc);
+// equalsButton.addEventListener("click", equalsFunc);
 //
 //
 //
