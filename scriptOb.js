@@ -16,12 +16,9 @@ const clearButton = document.getElementById("clear");
 //
 //
 //////////////////////////////////////////////////////////////////////
-/////////////////////////////   CALC OBJECT
+/////////////////////////////   CALC FUNC
 //////////////////////////////////////////////////////////////////////
 //
-//
-// const importedString = "30-20%2+9+3x7"; //This is the only variable that connects 'backend' to 'frontend'
-const importedString = "2+5x2-10%2";
 //
 const setUp = function (string) {
   //
@@ -31,7 +28,7 @@ const setUp = function (string) {
   let numberCollector = "";
   //
   [...string].forEach((ele, idx, arr) => {
-    if (Number(ele) || ele === "0" || ele === ".") {
+    if (Number(ele) || ele === "0" || ele === "." || idx === 0) {
       numberCollector += ele;
       if (idx === arr.length - 1) numbers.push(numberCollector); // If last element, push it
     } else {
@@ -54,37 +51,37 @@ const setUp = function (string) {
 //
 //
 // A recursive function that makes its way through the operators available until numbers array is length 1. At that point, return that number
+//
+const doMath = {
+  "+": function (a, b) {
+    return a + b;
+  },
+  "-": function (a, b) {
+    return a - b;
+  },
+  x: function (a, b) {
+    return a * b;
+  },
+  "%": function (a, b) {
+    return a / b;
+  },
+};
+//
 
-function compute(func) {
-  const displayObj = func(importedString); // Gets setUp object with numbers and operators as keys and arrays as values
+function compute(func, currentString) {
+  const displayObj = func(currentString); // Gets setUp object with numbers and operators as keys and arrays as values
   console.log("DisplayObject", displayObj);
   let order = ["%", "x", "-", "+"];
   //
-  const doMath = {
-    "+": function (a, b) {
-      return a + b;
-    },
-    "-": function (a, b) {
-      return a - b;
-    },
-    x: function (a, b) {
-      return a * b;
-    },
-    "%": function (a, b) {
-      return a / b;
-    },
-  };
   function recursion() {
     if (displayObj.numbers.length === 1) return;
     //
     while (displayObj.operators.includes(order[0])) {
-      console.log(`Order: ${order[0]} is being used`);
       let pos = displayObj.operators.indexOf(order[0]);
       //
       let first = displayObj.numbers[pos];
       let second = displayObj.numbers[pos + 1];
       let value = doMath[order[0]](Number(first), Number(second));
-      console.log("Value: ", value);
       //
       displayObj.numbers.splice(pos, 2, value);
       displayObj.operators.splice(pos, 1);
@@ -93,38 +90,57 @@ function compute(func) {
     recursion();
   }
   recursion();
-  return displayObj.numbers;
+  return displayObj.numbers[0];
 }
 //
-console.log(compute(setUp));
-// const equalsFunc = function () {
-//   console.log(compute(setUp));
-// };
+const equalsFunc = function () {
+  const currentString = output.textContent;
+  output.textContent = compute(setUp, currentString);
+};
 //
 //
 //
-// var math_it_up = {
-//   '+': function (x, y) { return x + y },
-//   '-': function (x, y) { return x - y }
-// }​​​​​​​;
-
-// math_it_up['+'](1, 2) == 3;
+//////////////////////////////////////////////////////////////////////
+/////////////////////////////   BASIC BUTTONS
+//////////////////////////////////////////////////////////////////////
+//
+//
+const numberClicked = function (e) {
+  output.textContent += e.target.textContent;
+};
+//
+//
+const clearClicked = function () {
+  output.textContent = "";
+};
+//
+//
+const operatorClicked = function (e) {
+  if (!output.textContent) return;
+  const clickedValue = e.target.textContent;
+  const lastIndex = output.textContent.length - 1; //Last idx of output.textContext
+  const lastValue = output.textContent[lastIndex];
+  const operators = ["%", "x", "-", "+"];
+  if (operators.includes(lastValue)) {
+    // The Last ele IS an operator
+    output.textContent = output.textContent.slice(0, -1).concat(clickedValue);
+  } else {
+    // The Last ele IS NOT an operator
+    output.textContent += clickedValue;
+  }
+};
+//
+//
 //////////////////////////////////////////////////////////////////////
 /////////////////////////////   EVENT LISTENERS
 //////////////////////////////////////////////////////////////////////
 //
-// equalsButton.addEventListener("click", equalsFunc);
+equalsButton.addEventListener("click", equalsFunc);
 //
+numberButtons.forEach((ele) => ele.addEventListener("click", numberClicked));
 //
+operations.forEach((ele) => ele.addEventListener("click", operatorClicked));
 //
+clearButton.addEventListener("click", clearClicked);
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-
-// var math_it_up = {
-//     '+': function (x, y) { return x + y },
-//     '-': function (x, y) { return x - y }
-// }​​​​​​​;
-
-// math_it_up['+'](1, 2) == 3;
-//
-// OR eval();
