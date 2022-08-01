@@ -9,14 +9,13 @@
 const numberButtons = document.querySelectorAll(".numbers"); // NodeList
 const operations = document.querySelectorAll(".operations"); // NodeList
 //
-const numberOne = document.getElementById("one");
 const equalsButton = document.getElementById("equals");
 const output = document.getElementById("output");
 const clearButton = document.getElementById("clear");
 //
 //
 //////////////////////////////////////////////////////////////////////
-/////////////////////////////   CALC FUNC
+/////////////////////////////   CALC FUNCTIONS
 //////////////////////////////////////////////////////////////////////
 //
 //
@@ -43,14 +42,12 @@ const setUp = function (string) {
     operators: operators,
   };
 };
-
 // This function - sepUp - returns an object with the current numbers and operators as arrays
-// We should now use this object as a value to pass into the compute function
+// We will pass this func to the Compute Function so it has access to current information
 // Compute function should return a value. This value must be put up on display for user.
-// When equals is clicked again, setUp will run from start and take the new string as input. Cycle
+// When equals is clicked again, Compute will call setUp again, which will return the updated information
 //
-//
-// A recursive function that makes its way through the operators available until numbers array is length 1. At that point, return that number
+// An object that contains operator keys that return their associated functions for Math operations
 //
 const doMath = {
   "+": function (a, b) {
@@ -67,10 +64,12 @@ const doMath = {
   },
 };
 //
-
+// The compute function, takes setUp and current display text as inputs
+// Recursively computes the information until only 1 number remains
+// Returns this number
+//
 function compute(func, currentString) {
   const displayObj = func(currentString); // Gets setUp object with numbers and operators as keys and arrays as values
-  console.log("DisplayObject", displayObj);
   let order = ["%", "x", "-", "+"];
   //
   function recursion() {
@@ -92,6 +91,8 @@ function compute(func, currentString) {
   recursion();
   return displayObj.numbers[0];
 }
+//
+// Updates display with returned value of compute.
 //
 const equalsFunc = function () {
   const currentString = output.textContent;
